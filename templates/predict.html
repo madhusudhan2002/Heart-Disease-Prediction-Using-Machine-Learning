@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Risk Analysis | HeartGuard</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+:root{
+--primary:#ff4d4d;
+--bg:#0f0f1a;
+--card-bg:rgba(26,26,46,0.9);
+--text:#e0e0e0;
+--input-bg:#1a1a2e;
+}
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Outfit',sans-serif;
+}
+
+body{
+background:var(--bg);
+color:var(--text);
+min-height:100vh;
+}
+
+.container{
+max-width:1000px;
+margin:4rem auto;
+padding:0 20px;
+}
+
+.predict-card{
+background:var(--card-bg);
+padding:3rem;
+border-radius:30px;
+position:relative;
+}
+
+.top-back{
+position:absolute;
+top:25px;
+left:30px;
+}
+
+.top-back button{
+background:transparent;
+border:1.5px solid #666;
+padding:0.4rem 0.9rem;
+border-radius:8px;
+color:#ccc;
+cursor:pointer;
+transition:0.3s;
+}
+
+.top-back button:hover{
+background:#222;
+border-color:white;
+color:white;
+}
+
+h2{
+font-size:2.5rem;
+margin-bottom:2rem;
+text-align:center;
+background:linear-gradient(45deg,#fff,var(--primary));
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+}
+
+.form-grid{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:1.5rem;
+}
+
+.input-group{
+display:flex;
+flex-direction:column;
+}
+
+.input-group label{
+margin-bottom:0.8rem;
+color:#a0a0b0;
+}
+
+.input-group input{
+padding:1rem 1.5rem;
+background:var(--input-bg);
+border:1px solid rgba(255,255,255,0.1);
+border-radius:12px;
+color:white;
+font-size:1rem;
+}
+
+.submit-btn{
+grid-column:span 2;
+margin-top:2rem;
+padding:1.2rem;
+background:var(--primary);
+color:white;
+border:none;
+border-radius:12px;
+font-size:1.2rem;
+font-weight:600;
+cursor:pointer;
+}
+
+.submit-btn:hover{
+opacity:0.9;
+}
+
+.result-panel{
+margin-top:3rem;
+display:none;
+padding:2rem;
+border-radius:20px;
+background:rgba(255,255,255,0.05);
+}
+
+.result-item{
+display:flex;
+justify-content:space-between;
+padding:1rem;
+border-bottom:1px solid rgba(255,255,255,0.05);
+}
+
+.risk{
+color:#ff4d4d;
+font-weight:700;
+}
+
+.good{
+color:#00ff88;
+font-weight:700;
+}
+
+.medium{
+color:#ffc107;
+font-weight:700;
+}
+
+.final-decision{
+margin-top:2rem;
+padding:1.5rem;
+border-radius:15px;
+text-align:center;
+font-size:1.3rem;
+font-weight:700;
+}
+
+.decision-risk{
+background:rgba(255,77,77,0.15);
+color:#ff4d4d;
+}
+
+.decision-good{
+background:rgba(0,255,136,0.15);
+color:#00ff88;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+<div class="predict-card">
+
+<div class="top-back">
+<button onclick="history.back()">← Go Back</button>
+</div>
+
+<h2>Patient Health Metrics</h2>
+
+<form id="predictionForm">
+
+<div class="form-grid">
+
+<div class="input-group">
+<label>Age</label>
+<input type="number" id="Age" required placeholder="e.g. 45">
+</div>
+
+<div class="input-group">
+<label>Cholesterol</label>
+<input type="number" id="Cholesterol" required placeholder="e.g. 210">
+</div>
+
+<div class="input-group">
+<label>Blood Pressure</label>
+<input type="number" id="Blood_Pressure" required placeholder="e.g. 130">
+</div>
+
+<div class="input-group">
+<label>Max Heart Rate</label>
+<input type="number" id="Max_Heart_Rate" required placeholder="e.g. 165">
+</div>
+
+<div class="input-group">
+<label>BMI</label>
+<input type="number" step="0.1" id="BMI" required placeholder="e.g. 24.5">
+</div>
+
+<div class="input-group">
+<label>Blood Sugar (0 or 1)</label>
+<input type="number" id="Blood_Sugar" min="0" max="1" required placeholder="0 or 1">
+</div>
+
+<button type="submit" class="submit-btn">
+Analyze Risk Profile
+</button>
+
+</div>
+</form>
+
+<div class="result-panel" id="resultPanel">
+
+<div class="result-item">
+<span>Prediction Result</span>
+<span id="ensembleRes"></span>
+</div>
+
+<div class="result-item">
+<span>Confidence Score</span>
+<span id="confidenceRes"></span>
+</div>
+
+<div class="result-item">
+<span>Risk Level</span>
+<span id="riskLevel"></span>
+</div>
+
+<div class="result-item">
+<span>Recommendation</span>
+<span id="recommendation"></span>
+</div>
+
+<div id="finalDecisionBox" class="final-decision"></div>
+
+</div>
+
+</div>
+</div>
+
+<script>
+
+document.getElementById('predictionForm').addEventListener('submit', async (e) => {
+
+e.preventDefault();
+
+const resultPanel = document.getElementById('resultPanel');
+
+const data = {
+Age: parseFloat(document.getElementById('Age').value),
+Cholesterol: parseFloat(document.getElementById('Cholesterol').value),
+Blood_Pressure: parseFloat(document.getElementById('Blood_Pressure').value),
+Max_Heart_Rate: parseFloat(document.getElementById('Max_Heart_Rate').value),
+BMI: parseFloat(document.getElementById('BMI').value),
+Blood_Sugar: parseInt(document.getElementById('Blood_Sugar').value)
+};
+
+try{
+
+const response = await fetch('/predict',{
+method:'POST',
+headers:{'Content-Type':'application/json'},
+body:JSON.stringify(data)
+});
+
+const result = await response.json();
+
+if(result.status === "success"){
+
+resultPanel.style.display = "block";
+if(result.status === "success"){
+
+    resultPanel.style.display = "block";
+
+    const ensembleEl = document.getElementById('ensembleRes');
+    const confidenceEl = document.getElementById('confidenceRes');
+    const riskLevelEl = document.getElementById('riskLevel');
+    const recommendationEl = document.getElementById('recommendation');
+    const decisionBox = document.getElementById('finalDecisionBox');
+
+    // ✅ Correct keys from backend
+    ensembleEl.textContent = result.result;
+    confidenceEl.textContent = result.confidence_score;
+    riskLevelEl.textContent = result.risk_level;
+    recommendationEl.textContent = result.advice;
+
+    // ✅ Color logic
+    ensembleEl.className = result.result.includes("Detected") ? "risk" : "good";
+
+    decisionBox.textContent = "Final Decision: " + result.final_decision;
+
+    if(result.final_decision.includes("Attention")){
+        decisionBox.className = "final-decision decision-risk";
+    } else {
+        decisionBox.className = "final-decision decision-good";
+    }
+
+}else{
+    alert(result.message);
+}
+
+}else{
+alert(result.message);
+}
+
+}catch(error){
+alert("Server error. Please try again.");
+console.error(error);
+}
+
+});
+
+</script>
+
+</body>
+</html>

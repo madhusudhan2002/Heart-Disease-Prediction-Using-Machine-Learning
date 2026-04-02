@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HeartGuard | Professional Cardiac Health Analysis</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #ff4d4d;
+            --secondary: #1a1a2e;
+            --accent: #4d94ff;
+            --bg: #0f0f1a;
+            --card-bg: rgba(26, 26, 46, 0.8);
+            --text: #e0e0e0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background: radial-gradient(circle at top right, #1a1a2e, #0f0f1a);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        nav {
+            padding: 2rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(15, 15, 26, 0.9);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .nav-links a {
+            color: var(--text);
+            text-decoration: none;
+            margin-left: 2.5rem;
+            font-weight: 500;
+            transition: 0.3s;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .hero {
+            padding: 8rem 5%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 4.5rem;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(45deg, #fff, var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.1;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            max-width: 800px;
+            color: #a0a0b0;
+            margin-bottom: 3rem;
+            line-height: 1.6;
+        }
+
+        .btn {
+            padding: 1.2rem 3rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 50px;
+            text-decoration: none;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 10px 30px rgba(255, 77, 77, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(255, 77, 77, 0.5);
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            padding: 5rem 5%;
+        }
+
+        .feature-card {
+            background: var(--card-bg);
+            padding: 3rem;
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: 0.4s;
+        }
+
+        .feature-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-10px);
+        }
+
+        .feature-card h3 {
+            font-size: 1.6rem;
+            margin-bottom: 1.2rem;
+            color: var(--primary);
+        }
+
+        .feature-card p {
+            color: #a0a0b0;
+            line-height: 1.5;
+        }
+
+        footer {
+            padding: 4rem 5%;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #666;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero>* {
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+    </style>
+</head>
+
+<body>
+    <nav>
+        <div class="logo">HeartGuard AI</div>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            {% if session.get('user_id') or session.get('admin_id') %}
+            <a href="/predict_page">Predict</a>
+            {% if session.get('admin_id') %}
+            <a href="/admin_dashboard">Dashboard</a>
+            {% endif %}
+            <a href="/logout">Logout</a>
+            {% else %}
+            <a href="/login">Login</a>
+            <a href="/signup" class="btn btn-primary" style="padding: 0.5rem 1.5rem; margin-left: 1.5rem;">Sign Up</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <header class="hero">
+        <h1>Detect Heart Risks <br>With AI Precision</h1>
+
+        <div class="cta-group">
+            {% if session.get('user_id') or session.get('admin_id') %}
+            <a href="/predict_page" class="btn btn-primary">Start Analysis</a>
+            {% else %}
+            <br><br>
+            <a href="/signup" class="btn btn-primary">Join Now</a>
+            {% endif %}
+        </div>
+    </header>
+
+    <section class="features">
+        <div class="feature-card">
+            <h3>Model Intelligence</h3>
+            <p>Our model analyzes complex interactions between 6 vital health features for
+                superior detection.</p>
+        </div>
+        <div class="feature-card">
+            <h3>97.57% Accuracy</h3>
+            <p>Validated performance metrics ensuring reliable health insights with high sensitivity and precision.</p>
+        </div>
+        <div class="feature-card">
+            <h3>Predictive Insights</h3>
+            <p>Real-time analysis of blood pressure, cholesterol, and cardiac metrics to anticipate potential risks
+                early.</p>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 HeartGuard AI Systems. Advanced Cardiac Analytics.</p>
+    </footer>
+</body>
+
+</html>
