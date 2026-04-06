@@ -7,11 +7,7 @@ The Heart Disease Prediction System is a machine learning-powered web applicatio
 User authentication system (Login / Signup / Password Reset)
 Interactive dashboard for user navigation
 Heart disease prediction using trained ML models
-Ensemble and Random Forest models (.joblib)
-Data preprocessing and feature handling
-Real-time prediction via web interface
-Persistent storage using SQLite database
-Clean UI using HTML templates
+
 🛠️ Tech Stack
 👨‍💻 Programming
 Python
@@ -70,7 +66,6 @@ heart-disease-prediction/
 ├── metrics.json           # Model evaluation results
 ├── heart_disease_data.csv # Dataset
 ├── database.db            # SQLite database
-├── ensemble_model.joblib  # Ensemble trained model
 ├── random_model.joblib    # Random Forest model
 ├── requirements.txt       # Dependencies
 │
